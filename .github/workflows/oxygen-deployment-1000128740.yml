@@ -24,17 +24,19 @@ jobs:
         run: npm ci
 
       - name: Build for Oxygen
+        # This generates the dist/worker folder required for the upload
         run: npm run build
 
       - name: Manual Upload to Oxygen
         env:
           OXYGEN_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
         run: |
-          # Compress the worker file
+          # 1. Navigate to the build folder and zip the contents
           cd dist/worker && zip -r ../worker.zip . && cd ../..
 
-          # Upload via Shopify's deployment API
+          # 2. Upload to Shopify's receiver with Production metadata
+          # This tells Shopify to show the link on your main dashboard
           curl -X POST "https://shopifycloud.com" \
           -H "Authorization: Bearer $OXYGEN_TOKEN" \
           -F "file=@dist/worker.zip" \
-          -F "metadata={\"runtime\":\"worker\"}"
+          -F "metadata={\"runtime\":\"worker\",\"branch\":\"main\",\"environment\":\"production\"}"
