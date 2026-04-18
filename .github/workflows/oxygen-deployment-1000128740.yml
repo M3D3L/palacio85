@@ -29,6 +29,6 @@ jobs:
 
       - name: Publish to Oxygen
         # Using the official action bypasses the CLI argument errors
-        uses: Shopify/hydrogen-deploy-action@v1
+        uses: shopify/hydrogen-deploy-action@v1
         with:
           oxygen_deployment_token: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
