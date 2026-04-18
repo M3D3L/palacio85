@@ -1,6 +1,7 @@
-if (typeof window === 'undefined') {
-  global.window = global.window || {};
-  global.window.matchMedia = global.window.matchMedia || function() {
+var _self = (typeof globalThis !== 'undefined') ? globalThis : (typeof self !== 'undefined') ? self : {};
+if (typeof _self.window === 'undefined') {
+  _self.window = _self;
+  _self.window.matchMedia = _self.window.matchMedia || function() {
     return {
       matches: false,
       addListener: function() {},

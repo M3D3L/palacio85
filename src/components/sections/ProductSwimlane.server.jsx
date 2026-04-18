@@ -1,8 +1,8 @@
 import {Suspense, useMemo} from 'react';
 import {gql, useShopQuery, useLocalization} from '@shopify/hydrogen';
 import {PRODUCT_CARD_FRAGMENT} from '~/lib/fragments';
-import {Section} from '~/components';
-import SimpleSlider from '../SimpleSlider.client';
+import {Section, ProductCard} from '~/components';
+
 const mockProducts = new Array(12).fill('');
 
 export function ProductSwimlane({
@@ -12,13 +12,9 @@ export function ProductSwimlane({
   ...props
 }) {
   const productCardsMarkup = useMemo(() => {
-    // If the data is already provided, there's no need to query it, so we'll just return the data
     if (typeof data === 'object') {
       return <ProductCards products={data} />;
     }
-
-    // If the data provided is a productId, we will query the productRecommendations API.
-    // To make sure we have enough products for the swimlane, we'll combine the results with our top selling products.
     if (typeof data === 'string') {
       return (
         <Suspense>
@@ -26,8 +22,6 @@ export function ProductSwimlane({
         </Suspense>
       );
     }
-
-    // If no data is provided, we'll go and query the top products
     return <TopProducts count={count} />;
   }, [count, data]);
 
@@ -41,7 +35,13 @@ export function ProductSwimlane({
 }
 
 function ProductCards({products}) {
-  return <SimpleSlider products={products} />;
+  return (
+    <div className="flex gap-4 overflow-x-auto">
+      {products.map((product, i) => (
+        <ProductCard key={product.id ?? i} product={product} />
+      ))}
+    </div>
+  );
 }
 
 function RecommendedProducts({productId, count}) {
@@ -52,12 +52,7 @@ function RecommendedProducts({productId, count}) {
 
   const {data: products} = useShopQuery({
     query: RECOMMENDED_PRODUCTS_QUERY,
-    variables: {
-      count,
-      productId,
-      languageCode,
-      countryCode,
-    },
+    variables: {count, productId, languageCode, countryCode},
   });
 
   const mergedProducts = products.recommended
@@ -70,7 +65,6 @@ function RecommendedProducts({productId, count}) {
   const originalProduct = mergedProducts
     .map((item) => item.id)
     .indexOf(productId);
-
   mergedProducts.splice(originalProduct, 1);
 
   return <ProductCards products={mergedProducts} />;
@@ -81,9 +75,7 @@ function TopProducts({count}) {
     data: {products},
   } = useShopQuery({
     query: TOP_PRODUCTS_QUERY,
-    variables: {
-      count,
-    },
+    variables: {count},
   });
   return <ProductCards products={products.nodes} />;
 }
