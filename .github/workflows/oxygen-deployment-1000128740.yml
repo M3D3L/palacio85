@@ -36,8 +36,8 @@ jobs:
           cp -r dist/client/* staging/
           cd staging && zip -r ../deploy.zip . && cd ..
 
-          # 2. Upload to the ACTUAL Oxygen Deployment API
-          # NOTE THE FULL URL PATH: /v1/deployments
+          # 2. Upload to the SPECIFIC Oxygen API Receiver
+          # This URL MUST include /v1/deployments
           curl -v -X POST "https://shopifycloud.com" \
           -H "Authorization: Bearer $OXYGEN_TOKEN" \
           -F "file=@deploy.zip" \
