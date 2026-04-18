@@ -24,15 +24,9 @@ jobs:
         run: npm ci
 
       - name: Build for Oxygen
-        # This creates the dist/worker and dist/client folders
         run: npm run build
 
       - name: Publish to Oxygen
-        # This is the official Shopify action for Oxygen deployments
-        uses: shopify/hydrogen-deploy-action@v1
-        with:
-          # Use the shpat_ token from your GitHub Secrets
-          oxygen_deployment_token: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
-          # Explicitly tell it where the built files are
-          worker_directory: dist/worker
-          client_directory: dist/client
+        # We use the deploy command with the production flag
+        # This tells Shopify to replace the "Sin despliegues" message
+        run: npx shopify hydrogen deploy --env production --token ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
