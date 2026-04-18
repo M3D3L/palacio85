@@ -1,15 +1,18 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, Suspense} from 'react';
 import {Image, Link} from '@shopify/hydrogen';
-import Slider from 'react-slick';
+// REMOVED: import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 export default function BannerSlider({loading, banners}) {
-  const [isClient, setIsClient] = useState(false);
+  const [Slider, setSlider] = useState(null);
 
-  // useEffect only runs in the browser, safely bypassing the Oxygen worker
   useEffect(() => {
-    setIsClient(true);
+    // This dynamically imports the library ONLY in the browser.
+    // The Oxygen worker will never execute this block.
+    import('react-slick').then((module) => {
+      setSlider(() => module.default);
+    });
   }, []);
 
   const Banner1 = banners[0];
@@ -26,22 +29,20 @@ export default function BannerSlider({loading, banners}) {
     pauseOnHover: true,
   };
 
-  // Render a static placeholder or the first image during SSR to prevent the crash
-  if (!isClient) {
+  // While loading the library or on the server, show a static placeholder
+  if (!Slider) {
     return (
       <div
-        className="aspect-auto min-w-[100%] w-full bg-transparent"
+        className="aspect-auto min-w-[100%] in-view w-full"
         style={{minHeight: '400px'}}
       >
-        <div className="aspect-auto min-w-[100%] in-view w-full">
-          <Image
-            loaderOptions={{crop: 'center', scale: 2}}
-            width={1920}
-            height={700}
-            src={Banner2}
-            alt="Banner Whiskey Loading"
-          />
-        </div>
+        <Image
+          loaderOptions={{crop: 'center', scale: 2}}
+          width={1920}
+          height={700}
+          src={Banner2}
+          alt="Loading..."
+        />
       </div>
     );
   }
