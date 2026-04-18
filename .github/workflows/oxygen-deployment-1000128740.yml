@@ -26,7 +26,21 @@ jobs:
       - name: Build for Oxygen
         run: npm run build
 
-      - name: Publish to Oxygen
-        # We use the deploy command with the production flag
-        # This tells Shopify to replace the "Sin despliegues" message
-        run: npx shopify hydrogen deploy --env production --token ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
+      - name: Manual Upload to Oxygen
+        env:
+          OXYGEN_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
+        run: |
+          # 1. Prepare a clean staging area
+          mkdir staging
+          cp -r dist/worker/* staging/
+          cp -r dist/client/* staging/
+
+          # 2. Zip the contents so index.js is at the root
+          cd staging && zip -r ../deploy.zip . && cd ..
+
+          # 3. Upload to the official Oxygen Deployment Receiver
+          # We use a simplified metadata string to ensure it's valid JSON
+          curl -v -X POST "https://shopifycloud.com" \
+          -H "Authorization: Bearer $OXYGEN_TOKEN" \
+          -F "file=@deploy.zip" \
+          -F "metadata={\"runtime\":\"worker\",\"branch\":\"main\",\"environment\":\"production\"}"
