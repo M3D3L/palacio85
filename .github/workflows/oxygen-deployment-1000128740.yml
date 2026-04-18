@@ -23,6 +23,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and Publish
-        # In CLI 3.7.1, the 'build' command with '--push' handles the upload
-        run: npx shopify hydrogen build --target=worker --push --token ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
+      - name: Build for Oxygen
+        # This creates the dist/worker/index.js file
+        run: npm run build
+
+      - name: Publish to Oxygen
+        # Using the official action bypasses the CLI argument errors
+        uses: Shopify/hydrogen-deploy-action@v1
+        with:
+          oxygen_deployment_token: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
