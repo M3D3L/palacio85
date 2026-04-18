@@ -1,10 +1,8 @@
 name: Storefront 1000128740
 on: [push]
-
 permissions:
   contents: read
   deployments: write
-
 jobs:
   deploy:
     name: Deploy to Oxygen
@@ -23,22 +21,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build for Oxygen
-        run: npm run build
-
-      - name: Manual Upload to Oxygen
+      - name: Build and deploy to Oxygen
+        uses: shopify/oxygenctl-action@v1
+        with:
+          path: ./dist
         env:
-          OXYGEN_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
-        run: |
-          # 1. Flatten the zip structure for Oxygen v1
-          mkdir -p staging
-          cp -r dist/worker/* staging/
-          cp -r dist/client/* staging/
-          cd staging && zip -r ../deploy.zip . && cd ..
-
-          # 2. Upload to the SPECIFIC Oxygen API Receiver
-          # This URL MUST include /v1/deployments
-          curl -v -X POST "https://shopifycloud.com" \
-          -H "Authorization: Bearer $OXYGEN_TOKEN" \
-          -F "file=@deploy.zip" \
-          -F "metadata={\"runtime\":\"worker\",\"branch\":\"main\",\"environment\":\"production\"}"
+          OXYGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
