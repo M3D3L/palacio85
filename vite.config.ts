@@ -9,7 +9,6 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['@headlessui/react', 'clsx', 'typographic-base'],
-    exclude: ['react-slick', 'slick-carousel', 'enquire.js', 'react-use'],
   },
   test: {
     globals: true,
