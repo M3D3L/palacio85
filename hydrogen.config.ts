@@ -5,7 +5,7 @@ export default defineConfig({
     defaultCountryCode: 'MX',
     defaultLanguageCode: 'ES',
     storeDomain: 'palacio85.myshopify.com',
-    storefrontToken: 'ee41262570cf48c82e8b7b67906bf5db',
+    storefrontToken: '5353a2766a3513847f02be6445e5301d',
     storefrontApiVersion: '2022-07',
   },
   session: CookieSessionStorage('__session', {
