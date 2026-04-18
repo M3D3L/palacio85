@@ -22,8 +22,7 @@ jobs:
         run: npm ci
 
       - name: Build and deploy to Oxygen
-        uses: shopify/oxygenctl-action@v1
+        uses: shopify/oxygenctl-action@v4
         with:
-          path: ./dist
-        env:
-          OXYGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
+          oxygen_deployment_token: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
+          build_command: 'npm run build'
