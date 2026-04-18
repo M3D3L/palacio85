@@ -1,9 +1,6 @@
 import {useCallback} from 'react';
 import {useServerProps} from '@shopify/hydrogen';
 
-// @ts-expect-error types not available
-import typographicBase from 'typographic-base';
-
 /**
  * This is a hack until we have better built-in primitives for
  * causing server components to re-render.
@@ -27,7 +24,7 @@ export function missingClass(string, prefix) {
   return string.match(regex) === null;
 }
 
-export function formatText(input) {
+export async function formatText(input) {
   if (!input) {
     return;
   }
@@ -36,6 +33,7 @@ export function formatText(input) {
     return input;
   }
 
+  const {default: typographicBase} = await import('typographic-base');
   return typographicBase(input, {locale: 'en-us'}).replace(
     /\s([^\s<]+)\s*$/g,
     '\u00A0$1',
