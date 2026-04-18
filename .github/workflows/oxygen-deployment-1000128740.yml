@@ -30,10 +30,20 @@ jobs:
         env:
           OXYGEN_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
         run: |
-          # Zip the entire dist folder so Oxygen finds the assets and the worker
-          cd dist && zip -r ../dist.zip . && cd ..
+          # 1. Create a temporary staging area
+          mkdir staging
 
+          # 2. Copy the worker contents (index.js, etc.) to the root of staging
+          cp -r dist/worker/* staging/
+
+          # 3. Copy the client assets to the root of staging
+          cp -r dist/client/* staging/
+
+          # 4. Zip the CONTENTS of the staging folder
+          cd staging && zip -r ../deploy.zip . && cd ..
+
+          # 5. Upload the flattened zip
           curl -X POST "https://shopifycloud.com" \
           -H "Authorization: Bearer $OXYGEN_TOKEN" \
-          -F "file=@dist.zip" \
+          -F "file=@deploy.zip" \
           -F "metadata={\"runtime\":\"worker\",\"branch\":\"main\",\"environment\":\"production\",\"deployment_token\":\"$OXYGEN_TOKEN\"}"
