@@ -9,8 +9,6 @@ export default function SimpleSlider({products}) {
     if (typeof window === 'undefined') return;
     Promise.all([
       import('react-slick'),
-      import('slick-carousel/slick/slick.css'),
-      import('slick-carousel/slick/slick-theme.css'),
     ]).then(([{default: Slider}]) => {
       setSliderComponent(() => Slider);
     });

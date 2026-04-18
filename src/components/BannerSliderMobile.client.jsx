@@ -10,8 +10,6 @@ export default function BannerSliderMobile({loading}) {
     // Dynamically import react-slick only on the client
     Promise.all([
       import('react-slick'),
-      import('slick-carousel/slick/slick.css'),
-      import('slick-carousel/slick/slick-theme.css'),
     ]).then(([{default: Slider}]) => {
       setSliderComponent(() => Slider);
     });
