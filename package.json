@@ -6,6 +6,7 @@
   "private": true,
   "author": "Guillermo Medel",
   "scripts": {
+    "postinstall": "node scripts/patch-enquire.js",
     "dev": "shopify hydrogen dev",
     "build": "shopify hydrogen build --target=worker",
     "preview": "shopify hydrogen preview --target=worker",

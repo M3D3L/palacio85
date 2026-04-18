@@ -1,3 +1,4 @@
+import './lib/enquire-shim.js';
 import {Suspense} from 'react';
 import renderHydrogen from '@shopify/hydrogen/entry-server';
 import {
