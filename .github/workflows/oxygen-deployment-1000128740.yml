@@ -30,15 +30,14 @@ jobs:
         env:
           OXYGEN_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
         run: |
-          # 1. Prepare the files
+          # 1. Flatten the zip structure for Oxygen v1
           mkdir -p staging
           cp -r dist/worker/* staging/
           cp -r dist/client/* staging/
-
-          # 2. Zip from within staging to keep index.js at the root
           cd staging && zip -r ../deploy.zip . && cd ..
 
-          # 3. Send to the official Oxygen Receiver
+          # 2. Upload to the ACTUAL Oxygen Deployment API
+          # NOTE THE FULL URL PATH: /v1/deployments
           curl -v -X POST "https://shopifycloud.com" \
           -H "Authorization: Bearer $OXYGEN_TOKEN" \
           -F "file=@deploy.zip" \
