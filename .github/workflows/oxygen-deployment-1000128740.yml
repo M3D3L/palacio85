@@ -16,7 +16,7 @@ jobs:
       - name: Setup node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "lts/*"
+          node-version: 18 # Specifically required for Hydrogen v1
           check-latest: true
 
       - name: Cache node modules
@@ -29,13 +29,17 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and Publish to Oxygen
-        run: npx shopify hydrogen deploy
-        env:
-          SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
+      - name: Build for Oxygen
+        # This will now trigger "shopify hydrogen build --target=worker"
+        # because of the script we fixed in your package.json
+        run: npm run build
+
+      - name: Publish to Oxygen
+        # Hydrogen v1 uses a specific action to upload the worker bundle
+        uses: Shopify/hydrogen-deploy-action@v1
+        with:
+          oxygen_deployment_token: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
