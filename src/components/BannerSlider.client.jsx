@@ -1,9 +1,17 @@
+import {useState, useEffect} from 'react';
 import {Image, Link} from '@shopify/hydrogen';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 export default function BannerSlider({loading, banners}) {
+  const [isClient, setIsClient] = useState(false);
+
+  // useEffect only runs in the browser, safely bypassing the Oxygen worker
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const Banner1 = banners[0];
   const Banner2 = banners[1];
   const Banner3 = banners[2];
@@ -18,19 +26,35 @@ export default function BannerSlider({loading, banners}) {
     pauseOnHover: true,
   };
 
+  // Render a static placeholder or the first image during SSR to prevent the crash
+  if (!isClient) {
+    return (
+      <div
+        className="aspect-auto min-w-[100%] w-full bg-transparent"
+        style={{minHeight: '400px'}}
+      >
+        <div className="aspect-auto min-w-[100%] in-view w-full">
+          <Image
+            loaderOptions={{crop: 'center', scale: 2}}
+            width={1920}
+            height={700}
+            src={Banner2}
+            alt="Banner Whiskey Loading"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Slider {...settings} className="scrollbar-hide">
       <div className="aspect-auto min-w-[100%] in-view w-full">
         <Link to={`/collections/Whiskey`} className="grid">
           <Image
-            loaderOptions={{
-              crop: 'center',
-              scale: 2,
-            }}
+            loaderOptions={{crop: 'center', scale: 2}}
             width={1920}
             height={700}
             alt="Banner Whiskey"
-            // @ts-ignore Stock type has `src` as optional
             src={Banner2}
             loading={loading}
           />
@@ -42,14 +66,10 @@ export default function BannerSlider({loading, banners}) {
           className="grid"
         >
           <Image
-            loaderOptions={{
-              crop: 'center',
-              scale: 2,
-            }}
+            loaderOptions={{crop: 'center', scale: 2}}
             width={1920}
             height={700}
             alt="Banner Vinos"
-            // @ts-ignore Stock type has `src` as optional
             src={Banner1}
             loading={loading}
           />
@@ -58,14 +78,10 @@ export default function BannerSlider({loading, banners}) {
       <div className="aspect-auto min-w-[100%] in-view w-full">
         <Link to={`/collections/All`} className="grid">
           <Image
-            loaderOptions={{
-              crop: 'center',
-              scale: 2,
-            }}
+            loaderOptions={{crop: 'center', scale: 2}}
             width={1920}
             height={700}
             alt="La Santa Tequila Banner"
-            // @ts-ignore Stock type has `src` as optional
             src={Banner3}
             loading={loading}
           />
