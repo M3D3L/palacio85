@@ -10,6 +10,10 @@ export default defineConfig({
   optimizeDeps: {
     include: ['@headlessui/react', 'clsx', 'react-use', 'typographic-base'],
   },
+  ssr: {
+    noExternal: ['@headlessui/react', 'clsx', 'react-use', 'typographic-base'],
+    external: ['react-dom'],
+  },
   test: {
     globals: true,
     testTimeout: 10000,

@@ -1,5 +1,4 @@
 import {useEffect} from 'react';
-import ReactDOM from 'react-dom';
 
 export default function AgePopup() {
   const slideToLeft = () => {
@@ -7,7 +6,6 @@ export default function AgePopup() {
     popup.style.transform = 'translateX(-100%)';
     const body = document.querySelector('body');
     body.style.overflowY = 'auto';
-    //set a cookie with the name 'age-verified' and value 'true'
     document.cookie = 'age-verified=true; max-age=31536000';
   };
 
@@ -24,7 +22,7 @@ export default function AgePopup() {
 
     const handleMouseLeave = () => {
       const popup = document.querySelector('.age-popup');
-      ReactDOM.unmountComponentAtNode(popup);
+      if (popup) popup.style.display = 'none';
     };
 
     document.addEventListener('mouseleave', handleMouseLeave);
@@ -53,7 +51,7 @@ export default function AgePopup() {
             <p>Tengo +18 años</p>
           </button>
           <button
-            className="rounded-full border  border-red-600 px-6 py-2 shadow-md shadow-red-900 hover:translate-y-[-2px] hover:bg-red-500 transition-all ease-out"
+            className="rounded-full border border-red-600 px-6 py-2 shadow-md shadow-red-900 hover:translate-y-[-2px] hover:bg-red-500 transition-all ease-out"
             onClick={linkToOtherPage}
           >
             <p>Tengo -18 años</p>
