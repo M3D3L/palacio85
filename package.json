@@ -7,13 +7,12 @@
   "author": "Guillermo Medel",
   "scripts": {
     "dev": "shopify hydrogen dev",
-    "build": "shopify hydrogen build",
-    "preview": "shopify hydrogen preview",
-    "deploy": "shopify hydrogen deploy",
+    "build": "shopify hydrogen build --target=worker",
+    "preview": "shopify hydrogen preview --target=worker",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
     "lint-ts": "tsc --noEmit",
     "test": "WATCH=true vitest",
-    "test:ci": "npm run build -t node && vitest run"
+    "test:ci": "npm run build && vitest run"
   },
   "dependencies": {
     "@ant-design/react-slick": "^0.29.2",
@@ -35,7 +34,6 @@
     "typographic-base": "^1.0.4"
   },
   "devDependencies": {
-    "@netlify/hydrogen-platform": "^1.1.2",
     "@shopify/cli": "3.7.1",
     "@shopify/cli-hydrogen": "3.7.1",
     "@shopify/prettier-config": "^1.1.2",
