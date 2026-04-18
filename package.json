@@ -1,18 +1,38 @@
 {
   "name": "palacio-85",
-  "description": "Demo store template for @shopify/hydrogen",
+  "description": "Store for Palacio 85",
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
+  "author": "Guillermo Medel",
   "scripts": {
     "dev": "shopify hydrogen dev",
-    "start": "dev",
     "build": "shopify hydrogen build",
     "preview": "shopify hydrogen preview",
+    "deploy": "shopify hydrogen deploy",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
     "lint-ts": "tsc --noEmit",
     "test": "WATCH=true vitest",
-    "test:ci": "yarn build -t node && vitest run"
+    "test:ci": "npm run build -t node && vitest run"
+  },
+  "dependencies": {
+    "@ant-design/react-slick": "^0.29.2",
+    "@cloudflare/kv-asset-handler": "^0.2.0",
+    "@headlessui/react": "^1.6.4",
+    "@heroicons/react": "^1.0.6",
+    "@shopify/hydrogen": "^1.2.0",
+    "clsx": "^1.1.1",
+    "graphql-tag": "^2.12.6",
+    "jquery": "^3.6.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-slick": "^0.29.0",
+    "react-use": "^17.4.0",
+    "slick-carousel": "^1.8.1",
+    "swiper": "^6.8.4",
+    "tailwind-scrollbar-hide": "^1.1.7",
+    "title": "^3.4.4",
+    "typographic-base": "^1.0.4"
   },
   "devDependencies": {
     "@netlify/hydrogen-platform": "^1.1.2",
@@ -35,24 +55,7 @@
     "vitest": "^0.15.2"
   },
   "prettier": "@shopify/prettier-config",
-  "dependencies": {
-    "@ant-design/react-slick": "^0.29.2",
-    "@cloudflare/kv-asset-handler": "^0.2.0",
-    "@headlessui/react": "^1.6.4",
-    "@heroicons/react": "^1.0.6",
-    "@shopify/hydrogen": "^1.2.0",
-    "clsx": "^1.1.1",
-    "graphql-tag": "^2.12.6",
-    "jquery": "^3.6.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-slick": "^0.29.0",
-    "react-use": "^17.4.0",
-    "slick-carousel": "^1.8.1",
-    "swiper": "^6.8.4",
-    "tailwind-scrollbar-hide": "^1.1.7",
-    "title": "^3.4.4",
-    "typographic-base": "^1.0.4"
-  },
-  "author": "Guill"
+  "engines": {
+    "node": ">=16.14.0 <19.0.0"
+  }
 }
