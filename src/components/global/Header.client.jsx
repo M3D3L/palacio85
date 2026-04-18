@@ -1,5 +1,5 @@
+import {useState, useEffect} from 'react';
 import {Link, useUrl, useCart, Image} from '@shopify/hydrogen';
-import {useWindowScroll} from 'react-use';
 
 import {
   Heading,
@@ -14,9 +14,17 @@ import {CartDrawer} from './CartDrawer.client';
 import {MenuDrawer} from './MenuDrawer.client';
 import {useDrawer} from './Drawer.client';
 
-/**
- * A client component that specifies the content of the header on the website
- */
+function useWindowScroll() {
+  const [y, setY] = useState(0);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handler = () => setY(window.scrollY);
+    window.addEventListener('scroll', handler, {passive: true});
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+  return {y};
+}
+
 export function Header({title, menu}) {
   const {pathname} = useUrl();
 
@@ -124,10 +132,7 @@ function MobileHeader({
             <div className="mt-[0.23rem]">Palacio</div>
             <Image
               className="w-7 h-7"
-              loaderOptions={{
-                crop: 'center',
-                scale: 2,
-              }}
+              loaderOptions={{crop: 'center', scale: 2}}
               width={50}
               height={50}
               alt="all products"
@@ -149,6 +154,7 @@ function MobileHeader({
     </header>
   );
 }
+
 function DesktopHeader({countryCode, isHome, loading, openCart}) {
   const gin =
     'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/Gin.png?v=1665642190';
@@ -164,8 +170,6 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
     'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/Whiskey.png?v=1665642190';
   const tequila =
     'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/Tequila.png?v=1665642189';
-  const cognac =
-    'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/Cognac.png?v=1665642189';
 
   const {y} = useWindowScroll();
 
@@ -194,10 +198,7 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
             </p>
             <Image
               className="w-10 h-10 mt-1"
-              loaderOptions={{
-                crop: 'center',
-                scale: 2,
-              }}
+              loaderOptions={{crop: 'center', scale: 2}}
               width={100}
               height={100}
               alt="all products"
@@ -207,17 +208,13 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
           </div>
         </Link>
         <nav className="flex justify-evenly py-1 w-full">
-          {/* List of all the Collections */}
           <Link
             to={'/collections/all'}
             className="flex justify-center flex-col opacity-90 group hover:opacity-100 transition-all duration-150 ease-in-out"
           >
             <Image
               className="w-10 h-10 mb-[0.2rem] mx-auto"
-              loaderOptions={{
-                crop: 'center',
-                scale: 2,
-              }}
+              loaderOptions={{crop: 'center', scale: 2}}
               width={100}
               height={100}
               alt="all products"
@@ -234,10 +231,7 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
             >
               <Image
                 className="w-7 h-7 mt-2 mb-[0.35rem] mx-auto"
-                loaderOptions={{
-                  crop: 'center',
-                  scale: 2,
-                }}
+                loaderOptions={{crop: 'center', scale: 2}}
                 width={400}
                 height={400}
                 alt="whiskey"
@@ -255,10 +249,7 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
             >
               <Image
                 className="w-5 h-9 mb-1 mx-auto"
-                loaderOptions={{
-                  crop: 'center',
-                  scale: 2,
-                }}
+                loaderOptions={{crop: 'center', scale: 2}}
                 width={400}
                 height={400}
                 alt="ginebra"
@@ -276,10 +267,7 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
             >
               <Image
                 className="w-10 h-10 mx-auto"
-                loaderOptions={{
-                  crop: 'center',
-                  scale: 2,
-                }}
+                loaderOptions={{crop: 'center', scale: 2}}
                 width={100}
                 height={100}
                 alt="tequila"
@@ -290,25 +278,6 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
               <p className="text-sm">Tequila</p>
             </Link>
           )}
-          {/* <Link
-            to={'/collections/Ginebra'}
-            className="group opacity-90 hover:opacity-100 text-white flex-col flex justify-center transition-all duration-150 ease-in-out"
-          >
-            <Image
-              className="w-6 h-6 mt-2  mb-2 transform mx-auto group-hover:animate-bounce"
-              loaderOptions={{
-                crop: 'center',
-                scale: 2,
-              }}
-              width={400}
-              height={400}
-              alt="cognac"
-              // @ts-ignore Stock type has `src` as optional
-              src={cognac}
-              loading={loading}
-            />
-            <p className="text-sm">Cognac</p>
-          </Link> */}
           {vodka && (
             <Link
               to={'/collections/Vodka'}
@@ -316,10 +285,7 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
             >
               <Image
                 className="w-6 h-7 mb-1 mx-auto mt-1"
-                loaderOptions={{
-                  crop: 'center',
-                  scale: 2,
-                }}
+                loaderOptions={{crop: 'center', scale: 2}}
                 width={100}
                 height={100}
                 alt="vodka"
@@ -330,26 +296,6 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
               <p className="text-sm">Vodka</p>
             </Link>
           )}
-          {/* List of all the Collections */}
-          {/* <Link
-            to={'/collections/Vino'}
-            className="flex justify-center flex-col group transition-all duration-150 ease-in-out opacity-90 hover:opacity-100"
-          >
-            <Image
-              className="w-8 h-8 mb-2 group-hover:animate-bounce mx-auto transform"
-              loaderOptions={{
-                crop: 'center',
-                scale: 2,
-              }}
-              width={100}
-              height={100}
-              alt="wine"
-              // @ts-ignore Stock type has `src` as optional
-              src={wine}
-              loading={loading}
-            />
-            <p className="text-sm">Vinos</p>
-          </Link> */}
           {digestivos && (
             <Link
               to={'/collections/vino'}
@@ -357,10 +303,7 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
             >
               <Image
                 className="w-8 h-8 mb-1 mx-auto"
-                loaderOptions={{
-                  crop: 'center',
-                  scale: 2,
-                }}
+                loaderOptions={{crop: 'center', scale: 2}}
                 width={100}
                 height={100}
                 alt="vino"
@@ -378,10 +321,7 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
             >
               <Image
                 className="w-5 h-8 mb-1 mx-auto"
-                loaderOptions={{
-                  crop: 'center',
-                  scale: 2,
-                }}
+                loaderOptions={{crop: 'center', scale: 2}}
                 width={100}
                 height={100}
                 alt="digestivos"
@@ -392,7 +332,6 @@ function DesktopHeader({countryCode, isHome, loading, openCart}) {
               <p className="text-sm">Digestivos</p>
             </Link>
           )}
-
           <Link
             to={'/collections/Otros'}
             className="flex justify-center flex-col group transition-all duration-150 ease-in-out opacity-90 hover:opacity-100"

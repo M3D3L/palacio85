@@ -1,14 +1,20 @@
-import {useRef} from 'react';
-import {useScroll} from 'react-use';
-import {
-  Link,
-  useCart,
-  CartLineProvider,
-  // CartShopPayButton,
-  Money,
-} from '@shopify/hydrogen';
+import {useRef, useState, useEffect} from 'react';
+import {Link, useCart, CartLineProvider, Money} from '@shopify/hydrogen';
 
 import {Button, Text, CartLineItem, CartEmpty} from '~/components';
+
+function useScroll(ref) {
+  const [y, setY] = useState(0);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const el = ref.current;
+    if (!el) return;
+    const handler = () => setY(el.scrollTop);
+    el.addEventListener('scroll', handler, {passive: true});
+    return () => el.removeEventListener('scroll', handler);
+  }, [ref]);
+  return {y};
+}
 
 export function CartDetails({layout, onClose}) {
   const {lines} = useCart();
@@ -78,7 +84,6 @@ function CartCheckoutActions() {
             </Button>
           </Link>
         ) : null}
-        {/* <CartShopPayButton /> */}
       </div>
     </>
   );

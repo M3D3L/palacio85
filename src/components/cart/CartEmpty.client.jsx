@@ -1,8 +1,19 @@
-import {useRef} from 'react';
-import {useScroll} from 'react-use';
+import {useRef, useState, useEffect, Suspense} from 'react';
 import {fetchSync} from '@shopify/hydrogen';
 import {Button, Text, ProductCard, Heading, Skeleton} from '~/components';
-import {Suspense} from 'react';
+
+function useScroll(ref) {
+  const [y, setY] = useState(0);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const el = ref.current;
+    if (!el) return;
+    const handler = () => setY(el.scrollTop);
+    el.addEventListener('scroll', handler, {passive: true});
+    return () => el.removeEventListener('scroll', handler);
+  }, [ref]);
+  return {y};
+}
 
 export function CartEmpty({onClose, layout = 'drawer'}) {
   const scrollRef = useRef(null);
@@ -72,7 +83,6 @@ function Loading() {
   return (
     <>
       {[...new Array(4)].map((_, i) => (
-        // eslint-disable-next-line react/no-array-index-key
         <div key={i} className="grid gap-2">
           <Skeleton className="aspect-[3/4]" />
           <Skeleton className="w-32 h-4" />
