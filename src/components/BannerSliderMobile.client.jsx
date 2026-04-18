@@ -1,9 +1,22 @@
+import {useState, useEffect} from 'react';
 import {Image, Link} from '@shopify/hydrogen';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
 
 export default function BannerSliderMobile({loading}) {
+  const [SliderComponent, setSliderComponent] = useState(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Dynamically import react-slick only on the client
+    Promise.all([
+      import('react-slick'),
+      import('slick-carousel/slick/slick.css'),
+      import('slick-carousel/slick/slick-theme.css'),
+    ]).then(([{default: Slider}]) => {
+      setSliderComponent(() => Slider);
+    });
+  }, []);
+
   const Banner1Mobile =
     'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/banner1mobile.webp?v=1666850299';
   const Banner2Mobile =
@@ -21,59 +34,62 @@ export default function BannerSliderMobile({loading}) {
     pauseOnHover: true,
   };
 
+  const slides = [
+    {
+      to: '/collections/Whiskey',
+      src: Banner1Mobile,
+      alt: 'whiskey banner',
+    },
+    {
+      to: '/products/la-santa-24k-tequila?tama%25C3%25B1o=750%2520ml',
+      src: Banner2Mobile,
+      alt: 'La Santa Tequila Banner',
+    },
+    {
+      to: '/collections/all',
+      src: Banner3Mobile,
+      alt: 'vinos banner',
+    },
+  ];
+
+  // SSR fallback: show first banner statically until JS loads
+  if (!SliderComponent) {
+    return (
+      <div className="aspect-auto min-w-[100%] w-full lg:hidden">
+        <Link to={slides[0].to} className="grid">
+          <Image
+            loaderOptions={{crop: 'center', scale: 2}}
+            width={1920}
+            height={700}
+            alt={slides[0].alt}
+            src={slides[0].src}
+            loading={loading}
+          />
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <Slider {...settings} className="scrollbar-hide overflow-x-scroll">
-      <div className="aspect-auto min-w-[100%] w-full lg:hidden">
-        <Link to={`/collections/Whiskey`} className="grid">
-          <Image
-            loaderOptions={{
-              crop: 'center',
-              scale: 2,
-            }}
-            width={1920}
-            height={700}
-            alt="whiskey banner"
-            // @ts-ignore Stock type has `src` as optional
-            src={Banner1Mobile}
-            loading={loading}
-          />
-        </Link>
-      </div>
-      <div className="aspect-auto min-w-[100%] w-full lg:hidden">
-        <Link
-          to={`/products/la-santa-24k-tequila?tama%25C3%25B1o=750%2520ml`}
-          className="grid"
+    <SliderComponent {...settings} className="scrollbar-hide overflow-x-scroll">
+      {slides.map((slide) => (
+        <div
+          key={slide.to}
+          className="aspect-auto min-w-[100%] w-full lg:hidden"
         >
-          <Image
-            loaderOptions={{
-              crop: 'center',
-              scale: 2,
-            }}
-            width={1920}
-            height={700}
-            alt="La Santa Tequila Banner"
-            // @ts-ignore Stock type has `src` as optional
-            src={Banner2Mobile}
-            loading={loading}
-          />
-        </Link>
-      </div>
-      <div className="aspect-auto min-w-[100%] w-full lg:hidden">
-        <Link to={`/collections/all`} className="grid">
-          <Image
-            loaderOptions={{
-              crop: 'center',
-              scale: 2,
-            }}
-            width={1920}
-            height={700}
-            alt="vinos banner"
-            // @ts-ignore Stock type has `src` as optional
-            src={Banner3Mobile}
-            loading={loading}
-          />
-        </Link>
-      </div>
-    </Slider>
+          <Link to={slide.to} className="grid">
+            <Image
+              loaderOptions={{crop: 'center', scale: 2}}
+              width={1920}
+              height={700}
+              alt={slide.alt}
+              // @ts-ignore Stock type has `src` as optional
+              src={slide.src}
+              loading={loading}
+            />
+          </Link>
+        </div>
+      ))}
+    </SliderComponent>
   );
 }

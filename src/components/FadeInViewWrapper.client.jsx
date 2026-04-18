@@ -4,6 +4,8 @@ const FadeInViewWrapper = ({children}) => {
   const observer = useRef(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     observer.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

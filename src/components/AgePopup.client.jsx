@@ -2,14 +2,16 @@ import {useEffect} from 'react';
 
 export default function AgePopup() {
   const slideToLeft = () => {
+    if (typeof window === 'undefined') return;
     const popup = document.querySelector('.age-popup');
-    popup.style.transform = 'translateX(-100%)';
+    if (popup) popup.style.transform = 'translateX(-100%)';
     const body = document.querySelector('body');
-    body.style.overflowY = 'auto';
+    if (body) body.style.overflowY = 'auto';
     document.cookie = 'age-verified=true; max-age=31536000';
   };
 
   const linkToOtherPage = () => {
+    if (typeof window === 'undefined') return;
     alert(
       'Esta tienda es para mayores de 18 años. Si eres menor de edad, por favor, abandona la página.',
     );
@@ -17,8 +19,10 @@ export default function AgePopup() {
   };
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const body = document.querySelector('body');
-    body.style.overflowY = 'hidden';
+    if (body) body.style.overflowY = 'hidden';
 
     const handleMouseLeave = () => {
       const popup = document.querySelector('.age-popup');
@@ -28,7 +32,7 @@ export default function AgePopup() {
     document.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
-      body.style.overflowY = 'auto';
+      if (body) body.style.overflowY = 'auto';
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, []);
