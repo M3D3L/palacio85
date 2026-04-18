@@ -26,24 +26,7 @@ jobs:
       - name: Build for Oxygen
         run: npm run build
 
-      - name: Manual Upload to Oxygen
-        env:
-          OXYGEN_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
-        run: |
-          # 1. Create a temporary staging area
-          mkdir staging
-
-          # 2. Copy the worker contents (index.js, etc.) to the root of staging
-          cp -r dist/worker/* staging/
-
-          # 3. Copy the client assets to the root of staging
-          cp -r dist/client/* staging/
-
-          # 4. Zip the CONTENTS of the staging folder
-          cd staging && zip -r ../deploy.zip . && cd ..
-
-          # 5. Upload the flattened zip
-          curl -X POST "https://shopifycloud.com" \
-          -H "Authorization: Bearer $OXYGEN_TOKEN" \
-          -F "file=@deploy.zip" \
-          -F "metadata={\"runtime\":\"worker\",\"branch\":\"main\",\"environment\":\"production\",\"deployment_token\":\"$OXYGEN_TOKEN\"}"
+      - name: Publish to Oxygen
+        # This command is the official way to send Hydrogen v1 to Oxygen
+        # It uses the shpat_ token you saved in GitHub Secrets
+        run: npx shopify hydrogen build --push --target=worker --token ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
