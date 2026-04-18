@@ -21,6 +21,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Debug token
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "TOKEN IS EMPTY - secret is missing or named wrong"
+          else
+            echo "Token length: ${#TOKEN}"
+            echo "Token starts with: ${TOKEN:0:6}..."
+          fi
+        env:
+          TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
+
       - name: Build and deploy to Oxygen
         uses: shopify/oxygenctl-action@v4
         with:
