@@ -11,22 +11,22 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 18 # Required for Hydrogen v1 compatibility
           check-latest: true
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build for Oxygen
+        # This triggers: shopify hydrogen build --target=worker
         run: npm run build
 
       - name: Publish to Oxygen
-        # We use the CLI to push the build folder directly
-        run: npx shopify hydrogen build --push
-        env:
-          SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
+        # This uses your shpat_... token to upload the build to Shopify
+        run: npx shopify hydrogen deploy --token ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
