@@ -7,9 +7,7 @@ export default function SimpleSlider({products}) {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    Promise.all([
-      import('react-slick'),
-    ]).then(([{default: Slider}]) => {
+    import('react-slick').then(({ default: Slider }) => {
       setSliderComponent(() => Slider);
     });
   }, []);

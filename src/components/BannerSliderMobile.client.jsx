@@ -8,9 +8,7 @@ export default function BannerSliderMobile({loading}) {
     if (typeof window === 'undefined') return;
 
     // Dynamically import react-slick only on the client
-    Promise.all([
-      import('react-slick'),
-    ]).then(([{default: Slider}]) => {
+    import('react-slick').then(({ default: Slider }) => {
       setSliderComponent(() => Slider);
     });
   }, []);
