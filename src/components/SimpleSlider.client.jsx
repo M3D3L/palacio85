@@ -1,17 +1,24 @@
+import {useState, useEffect, useRef} from 'react';
 import {ProductCard} from '~/components';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import {useRef} from 'react';
 
 export default function SimpleSlider({products}) {
+  const [SliderComponent, setSliderComponent] = useState(null);
   const sliderRef = useRef(null);
-  const handlePrevious = () => {
-    sliderRef.current.slickPrev();
-  };
-  const handleNext = () => {
-    sliderRef.current.slickNext();
-  };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    Promise.all([
+      import('react-slick'),
+      import('slick-carousel/slick/slick.css'),
+      import('slick-carousel/slick/slick-theme.css'),
+    ]).then(([{default: Slider}]) => {
+      setSliderComponent(() => Slider);
+    });
+  }, []);
+
+  const handlePrevious = () => sliderRef.current?.slickPrev();
+  const handleNext = () => sliderRef.current?.slickNext();
+
   const settings = {
     dots: false,
     infinite: true,
@@ -75,15 +82,29 @@ export default function SimpleSlider({products}) {
     ],
   };
 
+  // SSR fallback: render first few products in a static row
+  if (!SliderComponent) {
+    return (
+      <div className="flex overflow-x-hidden">
+        {products.slice(0, 6).map((product) => (
+          <div key={product.id} className="min-w-[150px] in-view">
+            <ProductCard product={product} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="relative overflow-x-scroll scrollbar-hide">
-      <Slider {...settings} ref={sliderRef}>
+      <SliderComponent {...settings} ref={sliderRef}>
         {products.map((product) => (
           <div key={product.id} className="min-w-[150px] in-view">
             <ProductCard product={product} key={product.id} />
           </div>
         ))}
-      </Slider>
+      </SliderComponent>
+
       <button
         className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 shadow-sm shadow-red-700 hover:shadow-md bg-red-500 border border-red-300 w-12 h-12 rounded-full transition-all text-white focus:outline-none hover:text-gray-500 hover:bg-gray-100"
         onClick={handlePrevious}
@@ -105,6 +126,7 @@ export default function SimpleSlider({products}) {
           </svg>
         </div>
       </button>
+
       <button
         className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 shadow-sm shadow-red-700 hover:shadow-md bg-red-500 border border-red-300 w-12 h-12 rounded-full transition-all text-white focus:outline-none hover:text-gray-500 hover:bg-gray-100"
         onClick={handleNext}
