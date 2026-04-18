@@ -24,17 +24,19 @@ jobs:
         run: npm ci
 
       - name: Build for Oxygen
+        # This generates BOTH dist/client and dist/worker
         run: npm run build
 
       - name: Manual Upload to Oxygen
         env:
           OXYGEN_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
         run: |
-          # 1. Empaquetar el worker
-          cd dist/worker && zip -r ../worker.zip . && cd ../..
+          # 1. Zip the ENTIRE dist folder
+          # Oxygen needs the client assets to avoid a 404
+          cd dist && zip -r ../dist.zip . && cd ..
 
-          # 2. Subir con metadatos completos para sincronizar con el panel de Shopify
+          # 2. Upload to the Oxygen Receiver
           curl -X POST "https://shopifycloud.com" \
           -H "Authorization: Bearer $OXYGEN_TOKEN" \
-          -F "file=@dist/worker.zip" \
-          -F "metadata={\"runtime\":\"worker\",\"branch\":\"main\",\"environment\":\"production\",\"deployment_token\":\"$OXYGEN_TOKEN\",\"commit_sha\":\"${{ github.sha }}\",\"commit_message\":\"${{ github.event.head_commit.message }}\",\"commit_author\":\"${{ github.actor }}\"}"
+          -F "file=@dist.zip" \
+          -F "metadata={\"runtime\":\"worker\",\"branch\":\"main\",\"environment\":\"production\",\"deployment_token\":\"$OXYGEN_TOKEN\",\"version\":\"1.1.${{ github.run_number }}\"}"
