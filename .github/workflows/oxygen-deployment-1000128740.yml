@@ -26,10 +26,21 @@ jobs:
       - name: Build for Oxygen
         run: npm run build
 
-      - name: Push to Oxygen
+      - name: Manual Upload to Oxygen
         env:
-          # Use the shpat_ token from your GitHub Secrets
-          SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
+          OXYGEN_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
         run: |
-          # We use the legacy CLI 'push' command which is built for v1
-          npx @shopify/cli-hydrogen@2.x push --target worker
+          # 1. Prepare a clean deployment folder
+          mkdir -p deploy
+          cp -r dist/worker/* deploy/
+          cp -r dist/client/* deploy/
+
+          # 2. Create the zip from the root of that folder
+          cd deploy && zip -r ../deploy.zip . && cd ..
+
+          # 3. Upload to the ACTUAL Oxygen API Receiver
+          # This endpoint is specifically for Oxygen deployments
+          curl -X POST "https://shopifycloud.com" \
+          -H "Authorization: Bearer $OXYGEN_TOKEN" \
+          -F "file=@deploy.zip" \
+          -F "metadata={\"runtime\":\"worker\",\"branch\":\"main\",\"environment\":\"production\"}"
