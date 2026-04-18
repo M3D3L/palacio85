@@ -26,7 +26,7 @@ jobs:
         run: npm run build
 
       - name: Publish to Oxygen
-        # Note the lowercase 'shopify'
-        uses: shopify/hydrogen-deploy-action@v1
-        with:
-          oxygen_deployment_token: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
+        # We use the CLI to push the build folder directly
+        run: npx shopify hydrogen build --push
+        env:
+          SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000128740 }}
