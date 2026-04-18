@@ -11,8 +11,7 @@ export default defineConfig({
     include: ['@headlessui/react', 'clsx', 'react-use', 'typographic-base'],
   },
   ssr: {
-    noExternal: ['@headlessui/react', 'clsx', 'react-use', 'typographic-base'],
-    external: ['react-dom'],
+    noExternal: ['typographic-base'],
   },
   test: {
     globals: true,
