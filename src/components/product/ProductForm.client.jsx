@@ -41,12 +41,14 @@ export function ProductForm() {
         params.set(
           encodeURIComponent(name.toLowerCase()),
           encodeURIComponent(selectedOptions[name].toLowerCase()),
-        ),
+        );
+        if (isBrowser()) {
           window.history.replaceState(
             null,
             '',
             `${pathname}?${params.toString()}`,
           );
+        }
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
