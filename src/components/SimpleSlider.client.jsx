@@ -14,13 +14,13 @@ export default function SimpleSlider({products}) {
   };
 
   return (
-    <div className="relative">
+    <div className="relative px-6">
       <div ref={emblaRef} className="overflow-hidden">
-        <div className="flex gap-2">
+        <div className="flex gap-2 py-2">
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex-[0_0_calc(100%/1.2)] sm:flex-[0_0_calc(100%/2.2)] md:flex-[0_0_calc(100%/3.2)] lg:flex-[0_0_calc(100%/4.2)] xl:flex-[0_0_calc(100%/6.2)] min-w-0 in-view"
+              className="flex-[0_0_80%] sm:flex-[0_0_45%] md:flex-[0_0_32%] lg:flex-[0_0_23%] xl:flex-[0_0_18%] min-w-0 in-view px-1"
             >
               <ProductCard product={product} />
             </div>
@@ -33,8 +33,19 @@ export default function SimpleSlider({products}) {
         onClick={() => scroll(-1)}
       >
         <div className="w-12 h-12 rounded-full grid content-center">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 mx-auto">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-6 h-6 mx-auto"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+            />
           </svg>
         </div>
       </button>
@@ -44,8 +55,19 @@ export default function SimpleSlider({products}) {
         onClick={() => scroll(1)}
       >
         <div className="w-12 h-12 rounded-full grid content-center">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 transform mx-auto rotate-180">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-6 h-6 transform mx-auto rotate-180"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+            />
           </svg>
         </div>
       </button>

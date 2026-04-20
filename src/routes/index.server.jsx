@@ -14,7 +14,7 @@ import {} from '~/lib/placeholders';
 import {FeaturedCollections} from '~/components';
 import {Layout, ProductSwimlane} from '~/components/index.server';
 import BannerSlider from '../components/BannerSlider.client';
-import BannerSliderMobile from '../components/BannerSliderMobile.client';
+// import BannerSliderMobile from '../components/BannerSliderMobile.client';
 import BrandsSlider from '../components/BrandsSlider.client';
 import MixodologiaSlider from '../components/MixodologiaSlider.client';
 import AgePopup from '../components/AgePopup.client';
@@ -76,11 +76,10 @@ function HomepageContent() {
 
   return (
     <div className="w-full h-full relative overflow-x-hidden max-w-[1920px] mx-auto">
-
       <div>
         <BannerSlider banners={[Banner1, Banner2, Banner3]} />
       </div>
-   
+
       <BrandsSlider />
 
       <ProductSwimlane
