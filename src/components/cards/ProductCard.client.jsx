@@ -53,8 +53,7 @@ export function ProductCard({product, loading, onClick}) {
           {/* Quick buy button - appears on hover */}
           <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
             <button className="w-full py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded-lg transition-colors duration-150 flex items-center justify-center gap-2">
-              <span className="group-hover:hidden">COMPRA 🍺</span>
-              <span className="hidden group-hover:inline">¡FIESTA! 🍻</span>
+              <span>COMPRA</span>
             </button>
           </div>
         </div>

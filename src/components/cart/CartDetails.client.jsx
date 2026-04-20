@@ -27,17 +27,19 @@ export function CartDetails({layout, onClose}) {
 
   const container = {
     drawer: 'grid grid-cols-1 h-screen-no-nav grid-rows-[1fr_auto]',
-    page: 'pb-12 grid md:grid-cols-2 md:items-start gap-8 md:gap-8 lg:gap-12',
+    page: 'pb-12 grid md:grid-cols-12 md:items-start gap-8 lg:gap-16 max-w-7xl mx-auto w-full',
   };
 
   const content = {
-    drawer: 'px-6 pb-6 sm-max:pt-2 overflow-auto transition md:px-12',
-    page: 'flex-grow md:translate-y-4',
+    drawer:
+      'px-6 pb-6 overflow-auto transition-all duration-300 md:px-8 custom-scrollbar',
+    page: 'md:col-span-7 lg:col-span-8',
   };
 
   const summary = {
-    drawer: 'grid gap-6 p-6 border-t md:px-12',
-    page: 'sticky top-nav grid gap-6 p-4 md:px-6 md:translate-y-4 bg-primary/5 rounded w-full',
+    drawer:
+      'grid gap-4 p-6 border-t border-contrast/10 bg-contrast/[0.02] backdrop-blur-md md:px-8',
+    page: 'md:col-span-5 lg:col-span-4 sticky top-[var(--height-nav)] grid gap-8 p-8 bg-contrast/[0.03] border border-contrast/10 rounded-2xl shadow-sm',
   };
 
   return (
@@ -45,20 +47,26 @@ export function CartDetails({layout, onClose}) {
       <section
         ref={scrollRef}
         aria-labelledby="cart-contents"
-        className={`${content[layout]} ${y > 0 ? 'border-t' : ''}`}
+        className={`${content[layout]} ${
+          y > 0 ? 'border-t border-contrast/10' : ''
+        }`}
       >
-        <ul className="grid gap-6 md:gap-10">
-          {lines.map((line) => {
-            return (
-              <CartLineProvider key={line.id} line={line}>
+        <ul className="divide-y divide-contrast/10">
+          {lines.map((line) => (
+            <li key={line.id} className="py-6 first:pt-0 last:pb-0">
+              <CartLineProvider line={line}>
                 <CartLineItem />
               </CartLineProvider>
-            );
-          })}
+            </li>
+          ))}
         </ul>
       </section>
+
       <section aria-labelledby="summary-heading" className={summary[layout]}>
-        <h2 id="summary-heading" className="sr-only">
+        <h2
+          id="summary-heading"
+          className="text-lg font-semibold tracking-tight"
+        >
           Resumen del pedido
         </h2>
         <OrderSummary />
@@ -71,40 +79,70 @@ export function CartDetails({layout, onClose}) {
 function CartCheckoutActions() {
   const {checkoutUrl} = useCart();
   return (
-    <>
-      <div className="grid gap-4 pb-8">
-        {checkoutUrl ? (
-          <Link to={checkoutUrl} prefetch={false} target="_self">
-            <Button
-              as="span"
-              width="full"
-              className="w-full border-2 shadow-lg shadow-green-900 lg:shadow-red-900 lg:hover:shadow-green-900 border-green-600 lg:border-red-600 hover:border-green-600 hover:translate-y-[-.15rem] transform transition-all duration-150"
-            >
-              Continuar a la caja
-            </Button>
-          </Link>
-        ) : null}
-      </div>
-    </>
+    <div className="grid gap-3">
+      {checkoutUrl ? (
+        <Link
+          to={checkoutUrl}
+          prefetch={false}
+          target="_self"
+          className="w-full"
+        >
+          <Button
+            as="span"
+            width="full"
+            variant="primary"
+            className="group relative overflow-hidden bg-black text-white py-4 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-black/10 active:scale-[0.98]"
+          >
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              Finalizar Pedido
+              <svg
+                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
+              </svg>
+            </span>
+          </Button>
+        </Link>
+      ) : null}
+      <p className="text-center text-xs text-contrast/50">
+        Impuestos y envío calculados en la pantalla de pago.
+      </p>
+    </div>
   );
 }
 
 function OrderSummary() {
   const {cost} = useCart();
   return (
-    <>
-      <dl className="grid">
-        <div className="flex items-center justify-between font-medium">
-          <Text as="dt">El Subtotal</Text>
-          <Text as="dd">
-            {cost?.subtotalAmount?.amount ? (
-              <Money data={cost?.subtotalAmount} />
-            ) : (
-              '-'
-            )}
-          </Text>
-        </div>
-      </dl>
-    </>
+    <dl className="space-y-3">
+      <div className="flex items-center justify-between text-base font-normal text-contrast/70">
+        <dt>Subtotal</dt>
+        <dd>
+          {cost?.subtotalAmount?.amount ? (
+            <Money data={cost?.subtotalAmount} />
+          ) : (
+            '-'
+          )}
+        </dd>
+      </div>
+      <div className="pt-4 border-t border-contrast/10 flex items-center justify-between">
+        <dt className="text-lg font-bold">Total estimado</dt>
+        <dd className="text-lg font-bold">
+          {cost?.subtotalAmount?.amount ? (
+            <Money data={cost?.subtotalAmount} />
+          ) : (
+            '-'
+          )}
+        </dd>
+      </div>
+    </dl>
   );
 }
