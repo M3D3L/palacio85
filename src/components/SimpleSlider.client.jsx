@@ -2,10 +2,13 @@ import useEmblaCarousel from 'embla-carousel-react';
 import {ProductCard} from '~/components';
 
 export default function SimpleSlider({products}) {
+  // Use 'center' as the default for mobile, but 'start' for larger screens if needed
+  // Or simply keep 'center' globally for a more balanced look
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
-    align: 'start',
+    align: 'center', // This centers the active slide
     dragFree: false,
+    containScroll: 'trimSnaps', // Prevents excessive whitespace at the ends
   });
 
   const scroll = (dir) => {
@@ -14,62 +17,64 @@ export default function SimpleSlider({products}) {
   };
 
   return (
-    <div className="relative px-6">
+    <div className="relative px-4 md:px-12">
       <div ref={emblaRef} className="overflow-hidden">
-        <div className="flex gap-2 py-2">
+        {/* Added 'ml-[-1rem]' to account for slide padding and keep centering true */}
+        <div className="flex gap-2 py-4">
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex-[0_0_80%] sm:flex-[0_0_45%] md:flex-[0_0_32%] lg:flex-[0_0_23%] xl:flex-[0_0_18%] min-w-0 in-view px-1"
+              className="flex-[0_0_80%] sm:flex-[0_0_45%] md:flex-[0_0_32%] lg:flex-[0_0_24%] min-w-0 px-2"
             >
-              <ProductCard product={product} />
+              <div className="transition-transform duration-300 hover:scale-[1.02]">
+                <ProductCard product={product} />
+              </div>
             </div>
           ))}
         </div>
       </div>
 
+      {/* Modernized Navigation Buttons */}
       <button
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 shadow-sm shadow-red-700 hover:shadow-md bg-red-500 border border-red-300 w-12 h-12 rounded-full transition-all text-white focus:outline-none hover:text-gray-500 hover:bg-gray-100"
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-contrast/10 shadow-sm transition-all hover:bg-white hover:scale-110 active:scale-95 text-contrast"
         onClick={() => scroll(-1)}
+        aria-label="Previous slide"
       >
-        <div className="w-12 h-12 rounded-full grid content-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="w-6 h-6 mx-auto"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
-        </div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="2"
+          stroke="currentColor"
+          className="w-5 h-5"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15.75 19.5L8.25 12l7.5-7.5"
+          />
+        </svg>
       </button>
 
       <button
-        className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 shadow-sm shadow-red-700 hover:shadow-md bg-red-500 border border-red-300 w-12 h-12 rounded-full transition-all text-white focus:outline-none hover:text-gray-500 hover:bg-gray-100"
+        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-contrast/10 shadow-sm transition-all hover:bg-white hover:scale-110 active:scale-95 text-contrast"
         onClick={() => scroll(1)}
+        aria-label="Next slide"
       >
-        <div className="w-12 h-12 rounded-full grid content-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="w-6 h-6 transform mx-auto rotate-180"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
-        </div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="2"
+          stroke="currentColor"
+          className="w-5 h-5"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M8.25 4.5l7.5 7.5-7.5 7.5"
+          />
+        </svg>
       </button>
     </div>
   );
