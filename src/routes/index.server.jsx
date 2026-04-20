@@ -10,11 +10,9 @@ import {
 } from '@shopify/hydrogen';
 
 import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/lib/fragments';
-import {} from '~/lib/placeholders';
 import {FeaturedCollections} from '~/components';
 import {Layout, ProductSwimlane} from '~/components/index.server';
 import BannerSlider from '../components/BannerSlider.client';
-// import BannerSliderMobile from '../components/BannerSliderMobile.client';
 import BrandsSlider from '../components/BrandsSlider.client';
 import MixodologiaSlider from '../components/MixodologiaSlider.client';
 import AgePopup from '../components/AgePopup.client';
@@ -26,7 +24,7 @@ const Banner2 =
   'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/Banner2.webp?v=1666849638';
 const Banner3 =
   'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/Banner3.webp?v=1666850127';
-const primaryColor = '#f13030';
+
 export default function Homepage() {
   useServerAnalytics({
     shopify: {
@@ -50,6 +48,7 @@ export default function Homepage() {
     </>
   );
 }
+
 function HomepageContent() {
   const {
     language: {isoCode: languageCode},
@@ -70,53 +69,63 @@ function HomepageContent() {
     featuredProducts,
     vinoProducts,
     tequilaProducts,
-    ginebraProducts,
     whiskeyProducts,
   } = data;
 
   return (
     <div className="w-full h-full relative overflow-x-hidden max-w-[1920px] mx-auto">
-      <div>
-        <BannerSlider banners={[Banner1, Banner2, Banner3]} />
+      {/* Hero Banner */}
+      <BannerSlider banners={[Banner1, Banner2, Banner3]} />
+
+      {/* Brands */}
+      <div className="py-4 border-y border-white/10">
+        <BrandsSlider />
       </div>
 
-      <BrandsSlider />
+      {/* Featured Products */}
+      <section className="mt-12">
+        <ProductSwimlane
+          data={featuredProducts.nodes}
+          title="en tendencia"
+          divider=""
+        />
+      </section>
 
-      <ProductSwimlane
-        data={featuredProducts.nodes}
-        title="en tendencia"
-        divider=""
-      />
-
-      <div className="w-full mt-8 flex flex-row">
+      {/* Collections */}
+      <section className="mt-12 px-4 md:px-8 lg:px-12">
         <FeaturedCollections
           data={featuredCollections.nodes}
           title="colecciones"
         />
-      </div>
+      </section>
 
-      <div className="mt-16">
+      {/* Tequila */}
+      <section className="mt-12">
         <ProductSwimlane
           data={tequilaProducts.nodes}
           title="tequila"
           divider=""
         />
-      </div>
+      </section>
 
-      <div className="mt-16">
+      {/* Mixología */}
+      <section className="mt-12">
         <MixodologiaSlider />
-      </div>
-      <div className="mt-16">
+      </section>
+
+      {/* Whiskey */}
+      <section className="mt-12">
         <ProductSwimlane
           data={whiskeyProducts.nodes}
           title="whiskey"
           divider=""
         />
-      </div>
+      </section>
 
-      <div className="mt-16">
-        <ProductSwimlane data={vinoProducts.nodes} title="Vinos" divider="" />
-      </div>
+      {/* Vinos */}
+      <section className="mt-12 mb-16">
+        <ProductSwimlane data={vinoProducts.nodes} title="vinos" divider="" />
+      </section>
     </div>
   );
 }
@@ -138,25 +147,11 @@ function SeoForHomepage() {
       data={{
         title: name,
         description,
-        titleTemplate: '%s ·  De Cuidad Obregón',
+        titleTemplate: '%s · De Cuidad Obregón',
       }}
     />
   );
 }
-
-/**
- * The homepage content query includes a request for custom metafields inside the alias
- * `heroBanners`. The template loads placeholder content if these metafields don't
- * exist. Define the following five custom metafields on your Shopify store to override placeholders:
- * - hero.title             Single line text
- * - hero.byline            Single line text
- * - hero.cta               Single line text
- * - hero.spread            File
- * - hero.spread_seconary   File
- *
- * @see https://help.shopify.com/manual/metafields/metafield-definitions/creating-custom-metafield-definitions
- * @see https://github.com/Shopify/hydrogen/discussions/1790
- */
 
 const HOMEPAGE_CONTENT_QUERY = gql`
   ${MEDIA_FRAGMENT}
@@ -217,11 +212,6 @@ const HOMEPAGE_CONTENT_QUERY = gql`
         ...ProductCard
       }
     }
-    ginebraProducts: products(first: 12, query: "tag:ginebra") {
-      nodes {
-        ...ProductCard
-      }
-    }
     whiskeyProducts: products(first: 12, query: "tag:whisky") {
       nodes {
         ...ProductCard
@@ -247,6 +237,7 @@ const HOMEPAGE_CONTENT_QUERY = gql`
     }
   }
 `;
+
 const HOMEPAGE_SEO_QUERY = gql`
   query shopInfo {
     shop {

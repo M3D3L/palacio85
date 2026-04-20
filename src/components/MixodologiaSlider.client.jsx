@@ -15,17 +15,6 @@ export default function MixodologiaSlider({loading}) {
   const mojito =
     'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/mojito.webp?v=1667003583';
 
-  const [mixImage, setMixImage] = useState(moscow);
-  const [mixTitle, setMixTitle] = useState('Moscow Mule');
-  const [selectedButton, setSelectedButton] = useState(0);
-  const [mixIngredients, setMixIngredients] = useState([
-    '45 ml. de vodka',
-    '10 ml. de zumo de limón recién exprimido',
-    'Una cucharada de cubitos de hielo picado',
-    '1 ginger beer o cerveza de jengibre',
-    'Hierbabuena y una rodaja de lima para decorar (opcional)',
-  ]);
-
   const drinks = [
     {
       label: 'Moscow Mule',
@@ -84,20 +73,20 @@ export default function MixodologiaSlider({loading}) {
     },
   ];
 
-  const selectDrink = (drink, index) => {
-    setMixTitle(drink.label);
-    setMixImage(drink.image);
-    setSelectedButton(index);
-    setMixIngredients(drink.ingredients);
-  };
+  const [selected, setSelected] = useState(0);
+  const drink = drinks[selected];
 
   return (
-    <div className="w-full h-auto p-4 md:p-8 md:h-[600px] flex flex-col">
-      <p className="section-text">Tragos 85</p>
-      <div className="w-full h-full flex flex-col md:flex-row">
-        <div className="w-full justify-center h-auto flex md:w-1/2 relative">
+    <div className="w-full px-4 md:px-8 py-12">
+      <p className="text-2xl md:text-3xl font-bold text-white tracking-widest mb-8 uppercase">
+        Tragos 85
+      </p>
+
+      <div className="flex flex-col md:flex-row gap-8 items-center">
+        {/* Drink image */}
+        <div className="w-full md:w-1/2 flex justify-center items-center relative h-80 md:h-[500px]">
           <Image
-            className="h-full absolute z-0 in-view opacity-90"
+            className="h-full absolute z-0 opacity-40"
             loaderOptions={{crop: 'center', scale: 2}}
             width={600}
             height={400}
@@ -106,37 +95,50 @@ export default function MixodologiaSlider({loading}) {
             loading={loading}
           />
           <Image
-            className="h-full z-10 m-auto fade-right in-view absolute"
+            className="h-full z-10 object-contain relative transition-all duration-500"
             loaderOptions={{crop: 'center', scale: 2}}
             width={350}
             height={400}
-            alt="drink"
-            src={mixImage}
+            alt={drink.label}
+            src={drink.image}
             loading={loading}
           />
         </div>
-        <div className="md:w-1/2 align-center p-4 grid content-center relative">
-          <div className="p-8 shadow-white h-auto shadow-md border-2 backdrop-blur-md border-white bg-white/30">
-            <p className="lg:text-5xl text-3xl neonText m-auto text-white tracking-widest">
-              {mixTitle}
-            </p>
-            <ul className="text-white lg:mt-4 lg:text-base text-sm">
-              {mixIngredients.map((ingredient) => (
-                <li key={ingredient.toString()}>{ingredient}</li>
+
+        {/* Recipe card */}
+        <div className="w-full md:w-1/2">
+          <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-md p-6 md:p-8">
+            {/* Title */}
+            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-wide mb-6">
+              {drink.label}
+            </h2>
+
+            {/* Ingredients */}
+            <ul className="space-y-2 mb-8">
+              {drink.ingredients.map((ingredient) => (
+                <li
+                  key={ingredient}
+                  className="flex items-start gap-2 text-white/80 text-sm md:text-base"
+                >
+                  <span className="text-red-500 mt-1">•</span>
+                  {ingredient}
+                </li>
               ))}
             </ul>
-            <div className="flex flex-wrap text-white mt-16 w-full gap-2 -ml-4 px-2 md:px-4">
-              {drinks.map((drink, index) => (
+
+            {/* Drink selector buttons */}
+            <div className="flex flex-wrap gap-2">
+              {drinks.map((d, index) => (
                 <button
-                  key={drink.label}
-                  onClick={() => selectDrink(drink, index)}
-                  style={{
-                    backgroundColor: selectedButton === index ? 'white' : 'red',
-                    color: selectedButton === index ? 'red' : 'white',
-                  }}
-                  className="max-h-8 py-1 px-4 md:max-h-10 lg:px-4 md:text-base text-sm shadow-lg shadow-red-800 hover:bg-white hover:text-red-600 bg-red-600 rounded-full hover:translate-y-[-2px] transition-all duration-150"
+                  key={d.label}
+                  onClick={() => setSelected(index)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-150 hover:translate-y-[-2px] ${
+                    selected === index
+                      ? 'bg-white text-red-600 shadow-lg shadow-red-900/30'
+                      : 'bg-transparent border border-white/30 text-white hover:border-red-500 hover:text-red-400'
+                  }`}
                 >
-                  {drink.label}
+                  {d.label}
                 </button>
               ))}
             </div>

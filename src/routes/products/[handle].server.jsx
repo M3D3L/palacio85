@@ -74,7 +74,6 @@ export default function Product() {
                 <div className="grid lg:pt-8 md:gap-2">
                   <Heading
                     as="h1"
-                    format
                     className="whitespace-normal text-2xl md:text-3xl"
                   >
                     {title}

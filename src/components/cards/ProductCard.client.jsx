@@ -13,7 +13,6 @@ import {getProductPlaceholder} from '~/lib/placeholders';
 
 export function ProductCard({product, loading, onClick}) {
   const cardData = product?.variants ? product : getProductPlaceholder();
-  const splash = 'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/splash.webp?v=1666879261';
 
   const {
     image,
@@ -22,81 +21,59 @@ export function ProductCard({product, loading, onClick}) {
   } = flattenConnection(cardData?.variants)[0] || {};
 
   return (
-    <Link to={`/products/${product.handle}`}>
-      <div
-        className={`group h-auto px-2 pb-2 group mx-auto pt-4 w-full mt-2 transition-all duration-150 hover:translate-y-[-0.5rem] transform shadow-lg rounded-[.25rem]`}
-      >
-        <div className="aspect-[4/5] relative h-auto">
+    <Link to={`/products/${product.handle}`} onClick={onClick}>
+      <div className="group relative flex flex-col h-full rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-red-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-red-900/20 hover:-translate-y-1">
+        {/* Image area */}
+        <div className="relative aspect-[3/4] overflow-hidden bg-black/20">
           {image && (
-            <div
-              className={`border-white group-hover:border-red-600 shadow-white group-hover:shadow-red-800 shadow-lg  border-2 rounded-sm p-1`}
-            >
-              <div
-                className={`border-white overflow-hidden group-hover:bg-red-600 group-hover:border-red-600 glassmorph duration-150 relative transition-all ease-out rounded-sm border`}
-              >
-                <Image
-                  className="ml-4 absolute z-0"
-                  loaderOptions={{
-                    crop: 'center',
-                    scale: 2,
-                  }}
-                  width={400}
-                  height={400}
-                  // @ts-ignore Stock type has `src` as optional
-                  src={splash}
-                  alt="efecto splash"
-                  loading={loading}
-                />
-                <Image
-                  className="aspect-[4/5] w-full fadeIn object-cover z-10 opacity-100 relative"
-                  loaderOptions={{
-                    crop: 'center',
-                    scale: 2,
-                    width: 320,
-                    height: 400,
-                  }}
-                  // @ts-ignore Stock type has `src` as optional
-                  data={image}
-                  alt={image.altText || `Picture of ${product.title}`}
-                  loading={loading}
-                />
-              </div>
+            <Image
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loaderOptions={{
+                crop: 'center',
+                scale: 2,
+                width: 320,
+                height: 400,
+              }}
+              data={image}
+              alt={image.altText || `Picture of ${product.title}`}
+              loading={loading}
+            />
+          )}
+
+          {/* Discount badge */}
+          {isDiscounted(price, compareAtPrice) && (
+            <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+              OFERTA
             </div>
           )}
-        </div>
-        <div className="grid gap-1 text-center">
-          <Text
-            className="w-full overflow-hidden mt-6 whitespace-nowrap text-ellipsis font-saira text-center"
-            as="h3"
-          >
-            {product.title}
-          </Text>
 
-          <div className="flex gap-4 justify-center">
-            <Text className="flex gap-4 ">
-              <Money withoutTrailingZeros data={price} />
-              {isDiscounted(price, compareAtPrice) && (
-                <CompareAtPrice
-                  className={'opacity-50'}
-                  data={compareAtPrice}
-                />
-              )}
-            </Text>
-          </div>
-          <div className="w-full flex justify-center">
-            <button className="lg:w-48 px-4 flex py-1 rounded-md h-9 bg-red-600 shadow-red-800 font-bold transition-all  duration-150 justify-center text-sm shadow-md mt-2">
-              <span className="group-hover:hidden mt-[0.3rem]">COMPRA</span>
-              <span className="group-hover:flex hidden mt-[0.3rem]">
-                ¡FIESTA!
-              </span>
+          {/* Hover overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-              <span className="group-hover:hidden text-xl -mt-[.15rem]">
-                🍺
-              </span>
-              <span className="group-hover:block hidden text-2xl -mt-[.15rem]">
-                🍻
-              </span>
+          {/* Quick buy button - appears on hover */}
+          <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+            <button className="w-full py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded-lg transition-colors duration-150 flex items-center justify-center gap-2">
+              <span className="group-hover:hidden">COMPRA 🍺</span>
+              <span className="hidden group-hover:inline">¡FIESTA! 🍻</span>
             </button>
+          </div>
+        </div>
+
+        {/* Info area */}
+        <div className="flex flex-col gap-1 p-3">
+          <h3 className="text-white text-sm font-medium truncate leading-snug">
+            {product.title}
+          </h3>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-white font-bold text-sm">
+              <Money withoutTrailingZeros data={price} />
+            </span>
+            {isDiscounted(price, compareAtPrice) && (
+              <CompareAtPrice
+                className="text-white/40 text-xs line-through"
+                data={compareAtPrice}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -108,10 +85,8 @@ function CompareAtPrice({data, className}) {
   const {currencyNarrowSymbol, withoutTrailingZerosAndCurrency} =
     useMoney(data);
 
-  const styles = clsx('strike', className);
-
   return (
-    <span className={styles}>
+    <span className={className}>
       {currencyNarrowSymbol}
       {withoutTrailingZerosAndCurrency}
     </span>
