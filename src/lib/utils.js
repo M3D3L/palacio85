@@ -1,5 +1,6 @@
 import {useCallback} from 'react';
 import {useServerProps} from '@shopify/hydrogen';
+import typographicBase from 'typographic-base';
 
 /**
  * This is a hack until we have better built-in primitives for
@@ -24,16 +25,16 @@ export function missingClass(string, prefix) {
   return string.match(regex) === null;
 }
 
-export async function formatText(input) {
-  if (!input) {
-    return;
-  }
-
-  if (typeof input !== 'string') {
+/**
+ * Synchronous version of formatText to prevent React Promise errors.
+ * Ensures typographic enhancements happen during the render cycle.
+ */
+export function formatText(input) {
+  if (!input || typeof input !== 'string') {
     return input;
   }
 
-  const {default: typographicBase} = await import('typographic-base');
+  // typographicBase is now called synchronously
   return typographicBase(input, {locale: 'en-us'}).replace(
     /\s([^\s<]+)\s*$/g,
     '\u00A0$1',
@@ -67,10 +68,6 @@ function resolveToFromType(
 ) {
   if (!pathname || !type) return '';
 
-  /*
-        MenuItemType enum
-        @see: https://shopify.dev/api/storefront/unstable/enums/MenuItemType
-      */
   const defaultPrefixes = {
     BLOG: 'blogs',
     COLLECTION: 'collections',
@@ -92,7 +89,6 @@ function resolveToFromType(
   };
 
   switch (true) {
-    // special cases
     case type === 'FRONTPAGE':
       return '/';
 
@@ -112,7 +108,6 @@ function resolveToFromType(
     case type === 'CATALOG':
       return `/${routePrefix.CATALOG}`;
 
-    // common cases: BLOG, PAGE, COLLECTION, PRODUCT, SHOP_POLICY, HTTP
     default:
       return routePrefix[type]
         ? `/${routePrefix[type]}/${handle}`
@@ -120,39 +115,26 @@ function resolveToFromType(
   }
 }
 
-/*
-  Parse each menu link and adding, isExternal, to and target
-*/
 function parseItem(customPrefixes = {}) {
   return function (item) {
     if (!item?.url || !item?.type) {
-      // eslint-disable-next-line no-console
       console.warn(
         'Elemento de menú no válido. Debe incluir una URL y un tipo.',
       );
-      // @ts-ignore
       return;
     }
 
-    // extract path from url because we don't need the origin on internal to attributes
     const {pathname} = new URL(item.url);
-
-    /*
-              Currently the MenuAPI only returns online store urls e.g — xyz.myshopify.com/..
-              Note: update logic when API is updated to include the active qualified domain
-            */
     const isInternalLink = /\.myshopify\.com/g.test(item.url);
 
     const parsedItem = isInternalLink
-      ? // internal links
-        {
+      ? {
           ...item,
           isExternal: false,
           target: '_self',
           to: resolveToFromType({type: item.type, customPrefixes, pathname}),
         }
-      : // external links
-        {
+      : {
           ...item,
           isExternal: true,
           target: '_blank',
@@ -166,16 +148,9 @@ function parseItem(customPrefixes = {}) {
   };
 }
 
-/*
-  Recursively adds `to` and `target` attributes to links based on their url
-  and resource type.
-  It optionally overwrites url paths based on item.type
-*/
 export function parseMenu(menu, customPrefixes = {}) {
   if (!menu?.items) {
-    // eslint-disable-next-line no-console
     console.warn('Menú no válido pasado a parseMenu');
-    // @ts-ignore
     return menu;
   }
 

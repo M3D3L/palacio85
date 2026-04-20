@@ -34,7 +34,7 @@ export function CartEmpty({onClose, layout = 'drawer'}) {
   return (
     <div ref={scrollRef} className={container[layout]}>
       <section className="grid gap-6">
-        <Text format>
+        <Text>
           Aún no has agregado productos a tu carrito de compras. Mira los
           productos más vendidos.
         </Text>
@@ -48,7 +48,7 @@ export function CartEmpty({onClose, layout = 'drawer'}) {
         </div>
       </section>
       <section className="grid gap-8 pt-4">
-        <Heading format size="copy">
+        <Heading size="copy">
           Lo mas vendido
         </Heading>
         <div
@@ -67,7 +67,7 @@ function TopProducts({onClose}) {
   const products = fetchSync('/api/bestSellers').json();
 
   if (products.length === 0) {
-    return <Text format>No se encontraron productos.</Text>;
+    return <Text>No se encontraron productos.</Text>;
   }
 
   return (
