@@ -1,146 +1,51 @@
-import {useState, useEffect, useRef} from 'react';
+import useEmblaCarousel from 'embla-carousel-react';
 import {ProductCard} from '~/components';
 
 export default function SimpleSlider({products}) {
-  const [SliderComponent, setSliderComponent] = useState(null);
-  const sliderRef = useRef(null);
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: 'start',
+    dragFree: false,
+  });
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    import('react-slick').then(({ default: Slider }) => {
-      setSliderComponent(() => Slider);
-    });
-  }, []);
-
-  const handlePrevious = () => sliderRef.current?.slickPrev();
-  const handleNext = () => sliderRef.current?.slickNext();
-
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    centerMode: false,
-    slidesToShow: 6,
-    slidesToScroll: 6,
-    autoplay: true,
-    pauseOnHover: true,
-    arrows: false,
-    responsive: [
-      {
-        breakpoint: 1600,
-        settings: {
-          slidesToShow: 5,
-          slidesToScroll: 5,
-          centerMode: false,
-          infinite: true,
-          dots: false,
-        },
-      },
-      {
-        breakpoint: 1400,
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 4,
-          centerMode: false,
-          infinite: true,
-          dots: false,
-        },
-      },
-      {
-        breakpoint: 1000,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-          centerMode: true,
-          infinite: true,
-          dots: false,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          centerMode: true,
-          initialSlide: 1,
-        },
-      },
-      {
-        breakpoint: 520,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          initialSlide: 1,
-          centerMode: true,
-          autoplay: false,
-        },
-      },
-    ],
+  const scroll = (dir) => {
+    if (!emblaApi) return;
+    dir === -1 ? emblaApi.scrollPrev() : emblaApi.scrollNext();
   };
 
-  // SSR fallback: render first few products in a static row
-  if (!SliderComponent) {
-    return (
-      <div className="flex overflow-x-hidden">
-        {products.slice(0, 6).map((product) => (
-          <div key={product.id} className="min-w-[150px] in-view">
-            <ProductCard product={product} />
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   return (
-    <div className="relative overflow-x-scroll scrollbar-hide">
-      <SliderComponent {...settings} ref={sliderRef}>
-        {products.map((product) => (
-          <div key={product.id} className="min-w-[150px] in-view">
-            <ProductCard product={product} key={product.id} />
-          </div>
-        ))}
-      </SliderComponent>
+    <div className="relative">
+      <div ref={emblaRef} className="overflow-hidden">
+        <div className="flex gap-2">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className="flex-[0_0_calc(100%/1.2)] sm:flex-[0_0_calc(100%/2.2)] md:flex-[0_0_calc(100%/3.2)] lg:flex-[0_0_calc(100%/4.2)] xl:flex-[0_0_calc(100%/6.2)] min-w-0 in-view"
+            >
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
+      </div>
 
       <button
         className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 shadow-sm shadow-red-700 hover:shadow-md bg-red-500 border border-red-300 w-12 h-12 rounded-full transition-all text-white focus:outline-none hover:text-gray-500 hover:bg-gray-100"
-        onClick={handlePrevious}
+        onClick={() => scroll(-1)}
       >
         <div className="w-12 h-12 rounded-full grid content-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="w-6 h-6 mx-auto"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 mx-auto">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
         </div>
       </button>
 
       <button
         className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 shadow-sm shadow-red-700 hover:shadow-md bg-red-500 border border-red-300 w-12 h-12 rounded-full transition-all text-white focus:outline-none hover:text-gray-500 hover:bg-gray-100"
-        onClick={handleNext}
+        onClick={() => scroll(1)}
       >
         <div className="w-12 h-12 rounded-full grid content-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="w-6 h-6 transform mx-auto rotate-180"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 transform mx-auto rotate-180">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
         </div>
       </button>

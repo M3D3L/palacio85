@@ -1,77 +1,57 @@
-import {useState, useEffect} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Image, Link} from '@shopify/hydrogen';
+import useEmblaCarousel from 'embla-carousel-react';
 
 export default function BannerSlider({loading, banners}) {
-  const [SliderComponent, setSliderComponent] = useState(null);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    import('react-slick').then(({ default: Slider }) => {
-      setSliderComponent(() => Slider);
-    });
-  }, []);
-
-  const Banner1 = banners[0];
-  const Banner2 = banners[1];
-  const Banner3 = banners[2];
+  const [emblaRef, emblaApi] = useEmblaCarousel({loop: true});
+  const [current, setCurrent] = useState(0);
+  const timerRef = useRef(null);
 
   const slides = [
-    {to: '/collections/Whiskey', src: Banner2, alt: 'Banner Whiskey'},
-    {
-      to: '/products/la-santa-24k-tequila?tama%25C3%25B1o=750%2520ml',
-      src: Banner1,
-      alt: 'Banner Vinos',
-    },
-    {to: '/collections/All', src: Banner3, alt: 'La Santa Tequila Banner'},
+    {to: '/collections/Whiskey', src: banners[1], alt: 'Banner Whiskey'},
+    {to: '/products/la-santa-24k-tequila?tama%25C3%25B1o=750%2520ml', src: banners[0], alt: 'Banner Vinos'},
+    {to: '/collections/All', src: banners[2], alt: 'La Santa Tequila Banner'},
   ];
 
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    pauseOnHover: true,
-  };
-
-  if (!SliderComponent) {
-    return (
-      <div
-        className="aspect-auto min-w-[100%] in-view w-full"
-        style={{minHeight: '400px'}}
-      >
-        <Link to={slides[0].to} className="grid">
-          <Image
-            loaderOptions={{crop: 'center', scale: 2}}
-            width={1920}
-            height={700}
-            alt={slides[0].alt}
-            src={slides[0].src}
-            loading={loading}
-          />
-        </Link>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.on('select', () => setCurrent(emblaApi.selectedScrollSnap()));
+    timerRef.current = setInterval(() => emblaApi.scrollNext(), 3000);
+    return () => {
+      clearInterval(timerRef.current);
+      emblaApi.off('select', () => {});
+    };
+  }, [emblaApi]);
 
   return (
-    <SliderComponent {...settings} className="scrollbar-hide">
-      {slides.map((slide) => (
-        <div key={slide.to} className="aspect-auto min-w-[100%] in-view w-full">
-          <Link to={slide.to} className="grid">
-            <Image
-              loaderOptions={{crop: 'center', scale: 2}}
-              width={1920}
-              height={700}
-              alt={slide.alt}
-              // @ts-ignore Stock type has `src` as optional
-              src={slide.src}
-              loading={loading}
-            />
-          </Link>
+    <div className="relative w-full overflow-hidden">
+      <div ref={emblaRef} className="overflow-hidden">
+        <div className="flex">
+          {slides.map((slide) => (
+            <div key={slide.to} className="flex-[0_0_100%] min-w-0">
+              <Link to={slide.to} className="grid">
+                <Image
+                  loaderOptions={{crop: 'center', scale: 2}}
+                  width={1920}
+                  height={700}
+                  alt={slide.alt}
+                  src={slide.src}
+                  loading={loading}
+                />
+              </Link>
+            </div>
+          ))}
         </div>
-      ))}
-    </SliderComponent>
+      </div>
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => emblaApi?.scrollTo(i)}
+            className={`w-2 h-2 rounded-full transition-all ${i === current ? 'bg-white scale-125' : 'bg-white/50'}`}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

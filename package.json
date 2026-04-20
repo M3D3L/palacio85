@@ -6,7 +6,6 @@
   "private": true,
   "author": "Guillermo Medel",
   "scripts": {
-    "postinstall": "node scripts/patch-enquire.js",
     "dev": "shopify hydrogen dev",
     "build": "shopify hydrogen build --target=worker",
     "preview": "shopify hydrogen preview --target=worker",
@@ -16,19 +15,16 @@
     "test:ci": "npm run build && vitest run"
   },
   "dependencies": {
-    "@ant-design/react-slick": "^0.29.2",
     "@cloudflare/kv-asset-handler": "^0.2.0",
     "@headlessui/react": "^1.6.4",
     "@heroicons/react": "^1.0.6",
     "@shopify/hydrogen": "^1.2.0",
     "clsx": "^1.1.1",
+    "embla-carousel-react": "^8.6.0",
     "graphql-tag": "^2.12.6",
-    "jquery": "^3.6.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-slick": "^0.29.0",
     "react-use": "^17.4.0",
-    "slick-carousel": "^1.8.1",
     "swiper": "^6.8.4",
     "tailwind-scrollbar-hide": "^1.1.7",
     "title": "^3.4.4",

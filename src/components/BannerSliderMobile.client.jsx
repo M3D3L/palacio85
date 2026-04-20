@@ -1,91 +1,57 @@
-import {useState, useEffect} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Image, Link} from '@shopify/hydrogen';
+import useEmblaCarousel from 'embla-carousel-react';
 
 export default function BannerSliderMobile({loading}) {
-  const [SliderComponent, setSliderComponent] = useState(null);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    // Dynamically import react-slick only on the client
-    import('react-slick').then(({ default: Slider }) => {
-      setSliderComponent(() => Slider);
-    });
-  }, []);
-
-  const Banner1Mobile =
-    'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/banner1mobile.webp?v=1666850299';
-  const Banner2Mobile =
-    'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/banner2mobile.webp?v=1666850306';
-  const Banner3Mobile =
-    'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/banner3mobile.webp?v=1666881872';
-
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    pauseOnHover: true,
-  };
+  const [emblaRef, emblaApi] = useEmblaCarousel({loop: true});
+  const [current, setCurrent] = useState(0);
+  const timerRef = useRef(null);
 
   const slides = [
-    {
-      to: '/collections/Whiskey',
-      src: Banner1Mobile,
-      alt: 'whiskey banner',
-    },
-    {
-      to: '/products/la-santa-24k-tequila?tama%25C3%25B1o=750%2520ml',
-      src: Banner2Mobile,
-      alt: 'La Santa Tequila Banner',
-    },
-    {
-      to: '/collections/all',
-      src: Banner3Mobile,
-      alt: 'vinos banner',
-    },
+    {to: '/collections/Whiskey', src: 'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/banner1mobile.webp?v=1666850299', alt: 'whiskey banner'},
+    {to: '/products/la-santa-24k-tequila?tama%25C3%25B1o=750%2520ml', src: 'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/banner2mobile.webp?v=1666850306', alt: 'La Santa Tequila Banner'},
+    {to: '/collections/all', src: 'https://cdn.shopify.com/s/files/1/0579/2769/6445/files/banner3mobile.webp?v=1666881872', alt: 'vinos banner'},
   ];
 
-  // SSR fallback: show first banner statically until JS loads
-  if (!SliderComponent) {
-    return (
-      <div className="aspect-auto min-w-[100%] w-full lg:hidden">
-        <Link to={slides[0].to} className="grid">
-          <Image
-            loaderOptions={{crop: 'center', scale: 2}}
-            width={1920}
-            height={700}
-            alt={slides[0].alt}
-            src={slides[0].src}
-            loading={loading}
-          />
-        </Link>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.on('select', () => setCurrent(emblaApi.selectedScrollSnap()));
+    timerRef.current = setInterval(() => emblaApi.scrollNext(), 3000);
+    return () => {
+      clearInterval(timerRef.current);
+      emblaApi.off('select', () => {});
+    };
+  }, [emblaApi]);
 
   return (
-    <SliderComponent {...settings} className="scrollbar-hide overflow-x-scroll">
-      {slides.map((slide) => (
-        <div
-          key={slide.to}
-          className="aspect-auto min-w-[100%] w-full lg:hidden"
-        >
-          <Link to={slide.to} className="grid">
-            <Image
-              loaderOptions={{crop: 'center', scale: 2}}
-              width={1920}
-              height={700}
-              alt={slide.alt}
-              // @ts-ignore Stock type has `src` as optional
-              src={slide.src}
-              loading={loading}
-            />
-          </Link>
+    <div className="relative w-full overflow-hidden lg:hidden">
+      <div ref={emblaRef} className="overflow-hidden">
+        <div className="flex">
+          {slides.map((slide) => (
+            <div key={slide.to} className="flex-[0_0_100%] min-w-0">
+              <Link to={slide.to} className="grid">
+                <Image
+                  loaderOptions={{crop: 'center', scale: 2}}
+                  width={1920}
+                  height={700}
+                  alt={slide.alt}
+                  src={slide.src}
+                  loading={loading}
+                />
+              </Link>
+            </div>
+          ))}
         </div>
-      ))}
-    </SliderComponent>
+      </div>
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => emblaApi?.scrollTo(i)}
+            className={`w-2 h-2 rounded-full transition-all ${i === current ? 'bg-white scale-125' : 'bg-white/50'}`}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
