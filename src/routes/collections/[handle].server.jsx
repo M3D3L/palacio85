@@ -59,9 +59,14 @@ export default function Collection({params}) {
       </Suspense>
       <PageHeader heading={collection.title}>
         {collection?.description && (
-          <div className="flex items-baseline justify-between w-full">
+          <div className="flex items-baseline justify-center bg-white/5 border border-white/10 p-6 rounded-lg  mx-auto">
             <div>
-              <Text format width="narrow" as="p" className="inline-block">
+              <Text
+                format
+                width="narrow"
+                as="p"
+                className="inline-block w-full"
+              >
                 {collection.description}
               </Text>
             </div>

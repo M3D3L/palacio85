@@ -24,15 +24,13 @@ export function ProductCard({product, loading, onClick}) {
     <Link to={`/products/${product.handle}`} onClick={onClick}>
       <div className="group relative flex flex-col h-full rounded-xl overflow-hidden bg-white/5 border border-white/10 hover:border-red-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-red-900/20 hover:-translate-y-1">
         {/* Image area */}
-        <div className="relative aspect-[3/4] overflow-hidden bg-black/20">
+        <div className="relative overflow-hidden max-h-[22rem] bg-black/20 p-4">
           {image && (
             <Image
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-full aspect-square transition-transform duration-500 group-hover:scale-105"
               loaderOptions={{
                 crop: 'center',
                 scale: 2,
-                width: 320,
-                height: 400,
               }}
               data={image}
               alt={image.altText || `Picture of ${product.title}`}
